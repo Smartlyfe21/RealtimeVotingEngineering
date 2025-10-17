@@ -54,6 +54,7 @@ A **real-time voting system** built for Uganda’s upcoming 2026 general electio
 - **PIL (Python Imaging Library)** – Displaying candidate images  
 - **Multithreading** – Handling large-scale vote insertion and simulation  
 - **Dashboard Visualizations** – Pie charts and live vote updates  
+- **Docker (Optional for Deployment)** – Containerize PostgreSQL, Kafka, and app for cloud deployment
 
 ---
 
