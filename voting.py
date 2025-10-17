@@ -24,7 +24,7 @@ KAFKA_CONFIG = {
 }
 
 TOPIC = 'votes'
-random.seed(21)
+random.seed(None)
 fake = Faker()
 TOTAL_VOTERS = 50_000
 BATCH_SIZE = 10_000
@@ -181,34 +181,59 @@ def insert_voters_threaded(start_idx, end_idx):
     cur.close()
     conn.close()
 
+
 # - Produce Votes
 # - Produce Votes
 def produce_votes():
-    global total_votes_casted
-    total_votes_casted = 0  # <<< Initialize here!
+    import json
+    import time
+    import random
+    from datetime import datetime, timezone
+    from confluent_kafka import Producer
+    from PIL import Image
+    import psycopg2
 
+    random.seed(None)  # ensure randomness each run
+
+    total_votes = 80_000  # total votes for the election
+
+    # --- Fetch candidates ---
     conn = psycopg2.connect(**PG_CONFIG)
     cur = conn.cursor()
-    cur.execute("SELECT candidate_id, candidate_name, slogan FROM candidates")
+    cur.execute("""
+        SELECT candidate_id, candidate_name, slogan, photo_url, party_affiliation, biography 
+        FROM candidates
+    """)
     candidates_list = cur.fetchall()
     conn.close()
 
-    producer = Producer({'bootstrap.servers': 'localhost:29092'})
-
-    target_votes = 80000  # new goal
-    winner_threshold = 0.51
-
-    # Pick winner randomly at start
+    # Randomly picked winner
     winner_candidate = random.choice(candidates_list)
+    others = [c for c in candidates_list if c != winner_candidate]
+    random.shuffle(others)
 
-    while total_votes_casted < target_votes:
-        if total_votes_casted < target_votes * 0.9:
-            # 90% of votes random for fairness
-            candidate = random.choice(candidates_list)
-        else:
-            # Last 10% of votes biased to winner to ensure 51%
-            candidate = winner_candidate
+    #  Assigning exact vote counts ---
+    winner_votes = random.randint(int(0.51 * total_votes), int(0.53 * total_votes))
+    runner_votes = random.randint(int(0.37 * total_votes), int(0.39 * total_votes))
+    last_votes = total_votes - winner_votes - runner_votes
 
+    votes_distribution = [
+        (winner_candidate, winner_votes),
+        (others[0], runner_votes),
+        (others[1], last_votes)
+    ]
+
+    # Build full votes list and shuffle
+    votes_list = []
+    for candidate, count in votes_distribution:
+        votes_list.extend([candidate] * count)
+    random.shuffle(votes_list)
+
+    #  Produce votes to Kafka
+    producer = Producer({'bootstrap.servers': 'localhost:29092'})
+    votes_casted = {c[1]: 0 for c in candidates_list}
+
+    for idx, candidate in enumerate(votes_list, start=1):
         vote = {
             'district': random.choice(districts),
             'candidate_id': candidate[0],
@@ -218,15 +243,26 @@ def produce_votes():
         }
 
         producer.produce(TOPIC, key=vote['district'], value=json.dumps(vote))
-        producer.flush()
+        votes_casted[candidate[1]] += 1
 
-        total_votes_casted += 1
-        print(f"🗳️ Produced vote #{total_votes_casted}: {vote}")
+        if idx % 500 == 0:
+            producer.flush()
+        time.sleep(0.005)  # small delay for realistic pace
 
-        time.sleep(0.06)  # slows down to ~8 minutes for 80k votes
+    producer.flush()
 
-    print(f"🏆 Winner: {winner_candidate[1]} should be above 51%")
+    #  Election results
+    print(f"\n🏁 Election ended — {total_votes} votes cast.")
+    sorted_votes = sorted(votes_casted.items(), key=lambda x: x[1], reverse=True)
+    for idx, (name, count) in enumerate(sorted_votes, start=1):
+        print(f"{['🏆 Winner','🥈 Runner-up','🥉 Third'][idx-1]}: {name} — {count} votes ({count/total_votes*100:.2f}%)")
 
+    #  Display winner image
+    winner_image_path = winner_candidate[3]
+    try:
+        Image.open(winner_image_path).show()
+    except Exception as e:
+        print(f"⚠️ Could not open winner image: {e}")
 
 # - Consume Votes
 def consume_votes():
