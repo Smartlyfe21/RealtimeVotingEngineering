@@ -1,4 +1,4 @@
-# Realtime Voting Engineering 🗳️
+# 🇺🇬 Realtime Voting Engineering 🗳️
 
 **Project Repository:** [GitHub Link](https://github.com/Smartlyfe21/RealtimeVotingEngineering.git)  
 
@@ -83,7 +83,6 @@ A **real-time voting system** built for Uganda’s upcoming 2026 general electio
 ```bash
 pip install -r requirements.txt
 
-
 ## 🚀 How to Run
 
 1. **Install dependencies:**  
@@ -128,5 +127,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-
