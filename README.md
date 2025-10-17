@@ -67,13 +67,13 @@ A **real-time voting system** built for Uganda’s upcoming 2026 general electio
 | Yoweri Museveni | 29,834 | 37.29% |
 | Mugisha Muntu | 9,068 | 11.34% |
 
-**Pie Chart Placeholder:**  
-![Pie Chart](images/pie_chart_placeholder.png)  
+**Pie Chart:**  
+<img src="images/pie_chart.png" alt="Pie Chart" width="400"/>
 
 **Candidate Images:**  
-- ![Robert Kyagulanyi Ssentamu](images/IMG_NUP_4181.jpg)  
-- ![Yoweri Museveni](images/IMG_NRM_4183.jpg)  
-- ![Mugisha Muntu](images/IMG_ANT_4179.jpg)  
+<img src="images/IMG_NUP_4181.jpg" alt="Robert Kyagulanyi Ssentamu" width="150"/>
+<img src="images/IMG_NRM_4183.jpg" alt="Yoweri Museveni" width="150"/>
+<img src="images/IMG_ANT_4179.jpg" alt="Mugisha Muntu" width="150"/>
 
 ---
 
