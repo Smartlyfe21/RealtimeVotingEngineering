@@ -31,7 +31,7 @@
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/Smartlyfe21/RealtimeVotingEngineering.git",
-    "accountId": "66f63729-6932-47f3-ae29-2594ef644e2d"
+    "accountId": "9655367c-80a6-4beb-81c6-aa379656bc5a"
   }
 }]]></component>
   <component name="ProjectColorInfo">{
@@ -107,6 +107,17 @@
       <updated>1759835540816</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
