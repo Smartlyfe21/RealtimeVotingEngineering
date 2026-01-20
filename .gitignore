@@ -1,2 +1,6 @@
 images/.DS_Store
 kafka_2.13-4.1.0/
+.DS_Store
+.idea/
+checkpoints/
+kafka_2.13-3.5.1.tgz
