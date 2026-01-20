@@ -6,8 +6,9 @@ from datetime import datetime, timezone
 from faker import Faker
 import psycopg2
 from confluent_kafka import Producer, Consumer, KafkaException
+from PIL import Image
 
-# - PostgreSQL Config
+#  PostgreSQL Config
 PG_CONFIG = {
     'host': 'localhost',
     'port': 5433,
@@ -16,7 +17,7 @@ PG_CONFIG = {
     'password': 'admin'
 }
 
-# - Kafka Config
+#  Kafka Config
 KAFKA_CONFIG = {
     'bootstrap.servers': 'localhost:29092',
     'group.id': 'vote-group',
@@ -24,29 +25,63 @@ KAFKA_CONFIG = {
 }
 
 TOPIC = 'votes'
-random.seed(21)
+random.seed(None)
 fake = Faker()
 TOTAL_VOTERS = 50_000
 BATCH_SIZE = 10_000
 NUM_THREADS = 4  # Number of threads for voter insertion
 
 # - Districts
-districts = [
-    'Abim', 'Adjumani', 'Agago', 'Alebtong', 'Amolatar', 'Amuria', 'Amuru', 'Apac', 'Arua',
-    'Budaka', 'Bududa', 'Bugiri', 'Bugweri', 'Buhweju', 'Buikwe', 'Bukedea', 'Bukomansimbi', 'Bukwo',
-    'Bulambuli', 'Buliisa', 'Bundibugyo', 'Bunyangabu', 'Bushenyi', 'Busia', 'Butaleja', 'Butambala',
-    'Buvuma', 'Buyende', 'Dokolo', 'Gomba', 'Gulu', 'Hoima', 'Ibanda', 'Iganga', 'Isingiro', 'Jinja',
-    'Kaabong', 'Kabale', 'Kabarole', 'Kaberamaido', 'Kalangala', 'Kaliro', 'Kalungu', 'Kampala',
-    'Kamuli', 'Kamwenge', 'Kanungu', 'Kapchorwa', 'Kasese', 'Katakwi', 'Kayunga', 'Kazo', 'Kibale',
-    'Kiboga', 'Kikuube', 'Kiruhura', 'Kiryandongo', 'Kisoro', 'Kitgum', 'Koboko', 'Kotido', 'Kumi',
-    'Kwania', 'Kween', 'Kyankwanzi', 'Kyegegwa', 'Kyenjojo', 'Kyotera', 'Lamwo', 'Lira', 'Luuka',
-    'Luwero', 'Lwengo', 'Lyantonde', 'Madi-Okollo', 'Manafwa', 'Maracha', 'Masaka', 'Masindi', 'Mayuge',
-    'Mbale', 'Mbarara', 'Mityana', 'Moyo', 'Mpigi', 'Mubende', 'Mukono', 'Nabilatuk', 'Nakaseke',
-    'Nakapiripirit', 'Nakasongola', 'Namayingo', 'Namisindwa', 'Namutumba', 'Napak', 'Nebbi', 'Ngora',
-    'Ntoroko', 'Ntungamo', 'Nwoya', 'Otuke', 'Oyam', 'Pader', 'Pakwach', 'Pallisa', 'Rakai', 'Rubanda',
-    'Rubirizi', 'Rukiga', 'Rukungiri', 'Sembabule', 'Serere', 'Sheema', 'Sironko', 'Soroti', 'Tororo',
-    'Wakiso', 'Yumbe', 'Zombo'
-]
+# — Full district → region map (146 districts, based on Uganda Bureau of Statistics)
+district_to_region = {
+    # Central (27)
+    "Buikwe": "Central", "Bukomansimbi": "Central", "Butambala": "Central", "Buvuma": "Central",
+    "Gomba": "Central", "Kalangala": "Central", "Kalungu": "Central", "Kampala": "Central",
+    "Kasanda": "Central", "Kayunga": "Central", "Kiboga": "Central", "Kyankwanzi": "Central",
+    "Kyotera": "Central", "Luweero": "Central", "Lwengo": "Central", "Lyantonde": "Central",
+    "Masaka": "Central", "Mityana": "Central", "Mpigi": "Central", "Mubende": "Central",
+    "Mukono": "Central", "Nakaseke": "Central", "Nakasongola": "Central", "Rakai": "Central",
+    "Sembabule": "Central", "Wakiso": "Central",
+
+    # Eastern (40)
+    "Amuria": "Eastern", "Budaka": "Eastern", "Bududa": "Eastern", "Bugiri": "Eastern",
+    "Bugweri": "Eastern", "Bukedea": "Eastern", "Bukwo": "Eastern", "Bulambuli": "Eastern",
+    "Busia": "Eastern", "Butaleja": "Eastern", "Butebo": "Eastern", "Buyende": "Eastern",
+    "Iganga": "Eastern", "Jinja": "Eastern", "Kaberamaido": "Eastern", "Kalaki": "Eastern",
+    "Kaliro": "Eastern", "Kamuli": "Eastern", "Kapchorwa": "Eastern", "Kapelebyong": "Eastern",
+    "Katakwi": "Eastern", "Kibuku": "Eastern", "Kumi": "Eastern", "Kween": "Eastern",
+    "Luuka": "Eastern", "Manafwa": "Eastern", "Mayuge": "Eastern", "Mbale": "Eastern",
+    "Namayingo": "Eastern", "Namisindwa": "Eastern", "Namutumba": "Eastern", "Ngora": "Eastern",
+    "Pallisa": "Eastern", "Serere": "Eastern", "Sironko": "Eastern", "Soroti": "Eastern",
+    "Tororo": "Eastern", "Butebo": "Eastern",
+
+    # Northern (41)
+    "Abim": "Northern", "Adjumani": "Northern", "Agago": "Northern", "Alebtong": "Northern",
+    "Amolatar": "Northern", "Amudat": "Northern", "Amuru": "Northern", "Apac": "Northern",
+    "Arua": "Northern", "Dokolo": "Northern", "Gulu": "Northern", "Kaabong": "Northern",
+    "Karenga": "Northern", "Kitgum": "Northern", "Koboko": "Northern", "Kole": "Northern",
+    "Kotido": "Northern", "Kwania": "Northern", "Lamwo": "Northern", "Lira": "Northern",
+    "Madi-Okollo": "Northern", "Maracha": "Northern", "Moroto": "Northern", "Moyo": "Northern",
+    "Nabilatuk": "Northern", "Nakapiripirit": "Northern", "Napak": "Northern", "Nebbi": "Northern",
+    "Nwoya": "Northern", "Obongi": "Northern", "Omoro": "Northern", "Otuke": "Northern",
+    "Oyam": "Northern", "Pader": "Northern", "Pakwach": "Northern", "Terego": "Northern",
+    "Yumbe": "Northern", "Zombo": "Northern",
+
+    # Western (38)
+    "Buhweju": "Western", "Buliisa": "Western", "Bundibugyo": "Western", "Bunyangabu": "Western",
+    "Bushenyi": "Western", "Hoima": "Western", "Ibanda": "Western", "Isingiro": "Western",
+    "Kabale": "Western", "Kabarole": "Western", "Kagadi": "Western", "Kakumiro": "Western",
+    "Kamwenge": "Western", "Kanungu": "Western", "Kasese": "Western", "Kazo": "Western",
+    "Kibaale": "Western", "Kikuube": "Western", "Kiruhura": "Western", "Kiryandongo": "Western",
+    "Kisoro": "Western", "Kitagwenda": "Western", "Kyegegwa": "Western", "Kyenjojo": "Western",
+    "Masindi": "Western", "Mbarara": "Western", "Mitooma": "Western", "Ntoroko": "Western",
+    "Ntungamo": "Western", "Rubanda": "Western", "Rubirizi": "Western", "Rukiga": "Western",
+    "Rukungiri": "Western", "Rwampara": "Western", "Sheema": "Western"
+}
+
+# — Create a districts list from that dictionary (so random.choice works)
+districts = list(district_to_region.keys())
+
 
 # - Thread Event & Vote Counts
 stop_event = threading.Event()
@@ -181,32 +216,98 @@ def insert_voters_threaded(start_idx, end_idx):
     cur.close()
     conn.close()
 
+
 # - Produce Votes
 def produce_votes():
+    random.seed(None)  # ensure randomness each run
+
+    total_votes = 500_000  # target simulation total
+
+    #  Fetch candidates from the database
     conn = psycopg2.connect(**PG_CONFIG)
     cur = conn.cursor()
-    cur.execute("SELECT candidate_id, candidate_name, slogan FROM candidates")
+    cur.execute("""
+        SELECT candidate_id, candidate_name, slogan, photo_url, party_affiliation, biography 
+        FROM candidates
+    """)
     candidates_list = cur.fetchall()
     conn.close()
 
-    producer = Producer({'bootstrap.servers': 'localhost:29092'})
+    #  Define support ranges for simulation
+    # Main contenders: NUP vs NRM
+    support_ranges = {
+        "National Unity Platform": (0.45, 0.60),
+        "National Resistance Movement": (0.40, 0.55)
+    }
 
-    while not stop_event.is_set():
-        candidate = random.choice(candidates_list)
+    # Small realistic support ranges for other parties
+    for cid, name, slogan, photo, party, bio in candidates_list:
+        if party not in support_ranges:
+            support_ranges[party] = (0.005, 0.02)
+
+    # Sample support weights from their ranges
+    national_support = {}
+    for party, (low, high) in support_ranges.items():
+        national_support[party] = random.uniform(low, high)
+
+    # Normalize weights so total support sums to 1
+    total_support = sum(national_support.values())
+    national_support = {k: v / total_support for k, v in national_support.items()}
+
+    # Keep track of votes cast
+    votes_casted = {c[1]: 0 for c in candidates_list}
+    producer = Producer({'bootstrap.servers': 'localhost:29092'})
+    votes_produced = 0
+
+    while votes_produced < total_votes:
+        district = random.choice(districts)
+
+        # Build candidate list + weights
+        candidate_names = []
+        weights = []
+        for cid, name, slogan, photo, party, bio in candidates_list:
+            candidate_names.append((cid, name, slogan, photo, party))
+            weights.append(national_support.get(party, 0))
+
+        chosen_idx = random.choices(range(len(candidate_names)), weights=weights, k=1)[0]
+        pick = candidate_names[chosen_idx]
+
         vote = {
-            'district': random.choice(districts),
-            'candidate_id': candidate[0],
-            'candidate_name': candidate[1],
-            'slogan': candidate[2],
+            'district': district,
+            'candidate_id': pick[0],
+            'candidate_name': pick[1],
+            'slogan': pick[2],
             'timestamp': datetime.now(timezone.utc).isoformat()
         }
-        producer.produce(TOPIC, key=vote['district'], value=json.dumps(vote))
-        producer.flush()
-        print(f"🗳️ Produced vote: {vote}")
-        time.sleep(1)
-    print("🛑 Producer thread stopped.")
 
-# - Consume Votes
+        producer.produce(TOPIC, key=vote['district'], value=json.dumps(vote))
+        votes_casted[pick[1]] += 1
+        votes_produced += 1
+
+        if votes_produced % 1000 == 0:
+            producer.flush()
+
+        # Stop early if someone clearly leads (≥52%) after a meaningful number of votes
+        if votes_produced >= (total_votes * 0.2):
+            lead_count = max(votes_casted.values())
+            if lead_count / votes_produced >= 0.52:
+                print(f"\n⚠️ Early stop — candidate hit ≥52% at {votes_produced} votes!")
+                break
+
+        # small delay for more gradual simulation
+        time.sleep(0.002)
+
+    producer.flush()
+
+    #  Print final results
+    print(f"\n🏁 Election ended — {votes_produced} votes cast.")
+    sorted_votes = sorted(votes_casted.items(), key=lambda x: x[1], reverse=True)
+    for idx, (name, count) in enumerate(sorted_votes, start=1):
+        pct = (count / votes_produced * 100) if votes_produced > 0 else 0
+        print(f"{idx}. {name} — {count} ({pct:.2f}%)")
+
+
+# Consume Votes
 def consume_votes():
     consumer = Consumer(KAFKA_CONFIG)
     consumer.subscribe([TOPIC])

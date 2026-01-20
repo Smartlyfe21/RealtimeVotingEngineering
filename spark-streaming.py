@@ -8,11 +8,11 @@ import psycopg2
 import psycopg2.extras
 from datetime import datetime
 
-# --- Setup Checkpoints ---
+#  Setup Checkpoints
 os.makedirs("checkpoints/checkpoint_postgres", exist_ok=True)
 os.makedirs("checkpoints/checkpoint_console", exist_ok=True)
 
-# --- Spark Session with exact .jar paths ---
+# Spark Session with exact .jar paths
 spark = SparkSession.builder \
     .appName("RealtimeVotingSparkStreaming") \
     .config("spark.jars", ",".join([
@@ -25,7 +25,7 @@ spark = SparkSession.builder \
 
 spark.sparkContext.setLogLevel("WARN")
 
-# --- Kafka and Postgres Config ---
+# Kafka and Postgres Config
 kafka_bootstrap_servers = "localhost:29092"
 kafka_topic = "votes"
 
@@ -37,7 +37,7 @@ PG_CONFIG = {
     'password': 'admin'
 }
 
-# --- Define vote schema ---
+#  Define vote schema
 vote_schema = StructType([
     StructField("district", StringType(), True),
     StructField("candidate_id", StringType(), True),
@@ -46,7 +46,7 @@ vote_schema = StructType([
     StructField("timestamp", TimestampType(), True)
 ])
 
-# --- Read streaming votes from Kafka ---
+# Read streaming votes from Kafka
 votes_df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", kafka_bootstrap_servers) \
@@ -58,12 +58,12 @@ votes_parsed = votes_df.selectExpr("CAST(value AS STRING) as json_str") \
     .select(from_json(col("json_str"), vote_schema).alias("data")) \
     .select("data.*")
 
-# --- Aggregate votes per candidate and district ---
+#  Aggregate votes per candidate and district
 vote_counts = votes_parsed.groupBy("district", "candidate_name") \
     .count() \
     .withColumnRenamed("count", "vote_count")
 
-# --- Function to write to Postgres ---
+#  Function to write to Postgres ---
 def write_to_postgres(df, epoch_id):
     if df.count() == 0:
         return
@@ -101,7 +101,7 @@ def write_to_postgres(df, epoch_id):
     cur.close()
     conn.close()
 
-# --- Spark write streams ---
+# Spark write streams
 # Write to Postgres
 postgres_query = vote_counts.writeStream \
     .outputMode("complete") \
@@ -117,6 +117,6 @@ console_query = vote_counts.writeStream \
     .option("checkpointLocation", "checkpoints/checkpoint_console") \
     .start()
 
-# --- Wait for termination ---
+#  termination
 postgres_query.awaitTermination()
 console_query.awaitTermination()

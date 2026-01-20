@@ -1,252 +1,311 @@
-# streamlit-app.py
+import os
+import json
 import streamlit as st
 import pandas as pd
 import psycopg2
 import plotly.express as px
+import plotly.graph_objects as go
+import streamlit.components.v1 as components
 from datetime import datetime
+import plotly.io as pio
 
-# Try to import autorefresh, warn if missing
+pio.templates.default = "plotly"
+
+# Candidate Colors & Images
+CANDIDATE_COLORS = {
+    'Yoweri Museveni': '#FFFF00',
+    'Robert Kyagulanyi Ssentamu': '#FF0000',
+    'Mugisha Muntu': '#800080',
+    'James Nathan Nandala Mafabi': '#ADD8E6',
+    'Mubarak Munyagwa Sserunga': '#FFA500',
+    'Elton Joseph Mabirizi': '#90EE90',
+    'Bulira Frank Kabinga': '#A52A2A',
+    'Robert Kasibante': '#000000'
+}
+
+
+CANDIDATE_IMAGES = {
+    'Yoweri Museveni': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_NRM_4183.jpg',
+    'Robert Kyagulanyi Ssentamu': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_NUP_4181.jpg',
+    'Mugisha Muntu': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_ANT_4179.jpg',
+    'James Nathan Nandala Mafabi': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_FDC_4804 2.jpg',
+    'Mubarak Munyagwa Sserunga': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_CMP4809 2.jpg',
+    'Elton Joseph Mabirizi': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_CP_4808 2.jpg',
+    'Bulira Frank Kabinga': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_RPP_4811.jpg',
+    'Robert Kasibante': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_NPP_4806 2.jpg'
+}
+
+#  District ID Mapping
+
+DISTRICT_ID_MAP = {
+    "UG101": "Kalangala", "UG102": "Kampala", "UG103": "Kiboga", "UG104": "Luwero",
+    "UG105": "Masaka", "UG106": "Mpigi", "UG107": "Mubende", "UG108": "Mukono",
+    "UG109": "Nakasongola", "UG110": "Rakai", "UG111": "Ssembabule", "UG112": "Kayunga",
+    "UG113": "Wakiso", "UG114": "Lyantonde", "UG115": "Mityana", "UG116": "Nakaseke",
+    "UG117": "Buikwe", "UG118": "Bukomansimbi", "UG119": "Butambala", "UG120": "Buvuma",
+    "UG121": "Gomba", "UG122": "Kalungu", "UG123": "Kyankwanzi", "UG124": "Lwengo",
+    "UG125": "Kyotera", "UG126": "Kassanda", "UG201": "Bugiri", "UG202": "Busia",
+    "UG203": "Iganga", "UG204": "Jinja", "UG205": "Kamuli", "UG206": "Kapchorwa",
+    "UG207": "Katakwi", "UG208": "Kumi", "UG209": "Mbale", "UG210": "Pallisa",
+    "UG211": "Soroti", "UG212": "Tororo", "UG213": "Kaberamaido", "UG214": "Mayuge",
+    "UG215": "Sironko", "UG216": "Amuria", "UG217": "Budaka", "UG218": "Bududa",
+    "UG219": "Bukedea", "UG220": "Bukwo", "UG221": "Butaleja", "UG222": "Kaliro",
+    "UG223": "Manafwa", "UG224": "Namutumba", "UG225": "Bulambuli", "UG226": "Buyende",
+    "UG227": "Kibuku", "UG228": "Kween", "UG229": "Luuka", "UG230": "Namayingo",
+    "UG231": "Ngora", "UG232": "Serere", "UG233": "Butebo", "UG234": "Namisindwa",
+    "UG235": "Bugweri", "UG236": "Kapelebyong", "UG237": "Kalaki", "UG301": "Adjumani",
+    "UG302": "Apac", "UG303": "Arua", "UG304": "Gulu", "UG305": "Kitgum",
+    "UG306": "Kotido", "UG307": "Lira", "UG308": "Moroto", "UG309": "Moyo",
+    "UG310": "Nebbi", "UG311": "Nakapiripirit", "UG312": "Pader", "UG313": "Yumbe",
+    "UG314": "Abim", "UG315": "Amolatar", "UG316": "Amuru", "UG317": "Dokolo",
+    "UG318": "Kaabong", "UG319": "Koboko", "UG320": "Maracha", "UG321": "Oyam",
+    "UG322": "Agago", "UG323": "Alebtong", "UG324": "Amudat", "UG325": "Kole",
+    "UG326": "Lamwo", "UG327": "Napak", "UG328": "Nwoya", "UG329": "Otuke",
+    "UG330": "Zombo", "UG331": "Omoro", "UG332": "Pakwach", "UG333": "Kwania",
+    "UG334": "Nabilatuk", "UG335": "Karenga", "UG336": "Madi Okollo", "UG337": "Obongi",
+    "UG401": "Bundibugyo", "UG402": "Bushenyi", "UG403": "Hoima", "UG404": "Kabale",
+    "UG405": "Kabarole", "UG406": "Kasese", "UG407": "Kibaale", "UG408": "Kisoro",
+    "UG409": "Masindi", "UG410": "Mbarara", "UG411": "Ntungamo", "UG412": "Rukungiri",
+    "UG413": "Kamwenge", "UG414": "Kanungu", "UG415": "Kyenjojo", "UG416": "Buliisa",
+    "UG417": "Ibanda", "UG418": "Isingiro", "UG419": "Kiruhura", "UG420": "Buhweju",
+    "UG421": "Kiryandongo", "UG422": "Kyegegwa", "UG423": "Mitooma", "UG424": "Ntoroko",
+    "UG425": "Rubirizi", "UG426": "Sheema", "UG427": "Kagadi", "UG428": "Kakumiro",
+    "UG429": "Rubanda", "UG430": "Bunyangabu", "UG431": "Rukiga", "UG432": "Kikuube",
+    "UG433": "Kazo", "UG434": "Kitagwenda", "UG435": "Rwampara"
+}
+
+# Create reverse mapping (district name -> district code)
+DISTRICT_NAME_TO_ID = {v: k for k, v in DISTRICT_ID_MAP.items()}
+
+TARGET_VOTES = int(os.getenv("TARGET_VOTES", 500000))
+
+#  District → Region Mapping
+
+district_to_region = {
+    "Buikwe": "Central", "Bukomansimbi": "Central", "Butambala": "Central", "Buvuma": "Central",
+    "Gomba": "Central", "Kalangala": "Central", "Kalungu": "Central", "Kampala": "Central",
+    "Kasanda": "Central", "Kayunga": "Central", "Kiboga": "Central", "Kyankwanzi": "Central",
+    "Kyotera": "Central", "Luweero": "Central", "Lwengo": "Central", "Lyantonde": "Central",
+    "Masaka": "Central", "Mityana": "Central", "Mpigi": "Central", "Mubende": "Central",
+    "Mukono": "Central", "Nakaseke": "Central", "Nakasongola": "Central", "Rakai": "Central",
+    "Sembabule": "Central", "Wakiso": "Central",
+
+    "Amuria": "Eastern", "Budaka": "Eastern", "Bududa": "Eastern", "Bugiri": "Eastern",
+    "Bugweri": "Eastern", "Bukedea": "Eastern", "Bukwo": "Eastern", "Bulambuli": "Eastern",
+    "Busia": "Eastern", "Butaleja": "Eastern", "Butebo": "Eastern", "Buyende": "Eastern",
+    "Iganga": "Eastern", "Jinja": "Eastern", "Kaberamaido": "Eastern", "Kaliro": "Eastern",
+    "Kamuli": "Eastern", "Kapchorwa": "Eastern", "Kapelebyong": "Eastern", "Katakwi": "Eastern",
+    "Kibuku": "Eastern", "Kumi": "Eastern", "Kween": "Eastern", "Luuka": "Eastern",
+    "Manafwa": "Eastern", "Mayuge": "Eastern", "Mbale": "Eastern", "Namayingo": "Eastern",
+    "Namisindwa": "Eastern", "Namutumba": "Eastern", "Ngora": "Eastern", "Pallisa": "Eastern",
+    "Serere": "Eastern", "Sironko": "Eastern", "Soroti": "Eastern", "Tororo": "Eastern",
+
+    "Abim": "Northern", "Adjumani": "Northern", "Agago": "Northern", "Alebtong": "Northern",
+    "Amolatar": "Northern", "Amudat": "Northern", "Amuru": "Northern", "Apac": "Northern",
+    "Arua": "Northern", "Dokolo": "Northern", "Gulu": "Northern", "Kaabong": "Northern",
+    "Karenga": "Northern", "Kitgum": "Northern", "Koboko": "Northern", "Kole": "Northern",
+    "Kotido": "Northern", "Kwania": "Northern", "Lamwo": "Northern", "Lira": "Northern",
+    "Madi-Okollo": "Northern", "Maracha": "Northern", "Moroto": "Northern", "Moyo": "Northern",
+    "Nabilatuk": "Northern", "Nakapiripirit": "Northern", "Napak": "Northern", "Nebbi": "Northern",
+    "Nwoya": "Northern", "Obongi": "Northern", "Omoro": "Northern", "Otuke": "Northern",
+    "Oyam": "Northern", "Pader": "Northern", "Pakwach": "Northern", "Terego": "Northern",
+    "Yumbe": "Northern", "Zombo": "Northern",
+
+    "Buhweju": "Western", "Buliisa": "Western", "Bundibugyo": "Western", "Bunyangabu": "Western",
+    "Bushenyi": "Western", "Hoima": "Western", "Ibanda": "Western", "Isingiro": "Western",
+    "Kabale": "Western", "Kabarole": "Western", "Kagadi": "Western", "Kakumiro": "Western",
+    "Kamwenge": "Western", "Kanungu": "Western", "Kasese": "Western", "Kazo": "Western",
+    "Kibaale": "Western", "Kikuube": "Western", "Kiruhura": "Western", "Kiryandongo": "Western",
+    "Kisoro": "Western", "Kitagwenda": "Western", "Kyegegwa": "Western", "Kyenjojo": "Western",
+    "Masindi": "Western", "Mbarara": "Western", "Mitooma": "Western", "Ntoroko": "Western",
+    "Ntungamo": "Western", "Rubanda": "Western", "Rubirizi": "Western", "Rukiga": "Western",
+    "Rukungiri": "Western", "Rwampara": "Western", "Sheema": "Western"
+}
+
+DISTRICTS = list(district_to_region.keys())
+
+#  Auto Refresh
+
 try:
     from streamlit_autorefresh import st_autorefresh
     has_autorefresh = True
-except Exception:
+except:
     has_autorefresh = False
 
-
-# Config / Constants
-
-st.set_page_config(page_title="Realtime UG-Election Voting Dashboard", layout="wide")
-
-# Candidate colors and images (use the ones from your main.py)
-CANDIDATE_COLORS = {
-    'Yoweri Museveni': 'yellow',
-    'Robert Kyagulanyi Ssentamu': 'red',
-    'Mugisha Muntu': 'purple'
-}
-
-CANDIDATE_IMAGES = {
-    'Yoweri Museveni': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_NRM_4183.jpg',  # NRM candidate yellow
-    'Robert Kyagulanyi Ssentamu': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_NUP_4181.jpg',  # NUP candidate red
-    'Mugisha Muntu': '/Users/smartlyfe/Desktop/RealtimeVotingEngineering/images/IMG_ANT_4179.jpg'  # ANT candidate purple
-}
-
-
-# All districts (same list you used)
-DISTRICTS = [
-    'Abim', 'Adjumani', 'Agago', 'Alebtong', 'Amolatar', 'Amuria', 'Amuru', 'Apac', 'Arua',
-    'Budaka', 'Bududa', 'Bugiri', 'Bugweri', 'Buhweju', 'Buikwe', 'Bukedea', 'Bukomansimbi', 'Bukwo',
-    'Bulambuli', 'Buliisa', 'Bundibugyo', 'Bunyangabu', 'Bushenyi', 'Busia', 'Butaleja', 'Butambala',
-    'Buvuma', 'Buyende', 'Dokolo', 'Gomba', 'Gulu', 'Hoima', 'Ibanda', 'Iganga', 'Isingiro', 'Jinja',
-    'Kaabong', 'Kabale', 'Kabarole', 'Kaberamaido', 'Kalangala', 'Kaliro', 'Kalungu', 'Kampala',
-    'Kamuli', 'Kamwenge', 'Kanungu', 'Kapchorwa', 'Kasese', 'Katakwi', 'Kayunga', 'Kazo', 'Kibale',
-    'Kiboga', 'Kikuube', 'Kiruhura', 'Kiryandongo', 'Kisoro', 'Kitgum', 'Koboko', 'Kotido', 'Kumi',
-    'Kwania', 'Kween', 'Kyankwanzi', 'Kyegegwa', 'Kyenjojo', 'Kyotera', 'Lamwo', 'Lira', 'Luuka',
-    'Luwero', 'Lwengo', 'Lyantonde', 'Madi-Okollo', 'Manafwa', 'Maracha', 'Masaka', 'Masindi', 'Mayuge',
-    'Mbale', 'Mbarara', 'Mityana', 'Moyo', 'Mpigi', 'Mubende', 'Mukono', 'Nabilatuk', 'Nakaseke',
-    'Nakapiripirit', 'Nakasongola', 'Namayingo', 'Namisindwa', 'Namutumba', 'Napak', 'Nebbi', 'Ngora',
-    'Ntoroko', 'Ntungamo', 'Nwoya', 'Otuke', 'Oyam', 'Pader', 'Pakwach', 'Pallisa', 'Rakai', 'Rubanda',
-    'Rubirizi', 'Rukiga', 'Rukungiri', 'Sembabule', 'Serere', 'Sheema', 'Sironko', 'Soroti', 'Tororo',
-    'Wakiso', 'Yumbe', 'Zombo'
-]
-
-TARGET_VOTES = 50000
-
-# PostgreSQL connection
-DB_CONFIG = {
-    'host': 'localhost',
-    'port': 5433,
-    'dbname': 'votes_db',
-    'user': 'admin',
-    'password': 'admin'
-}
-
-# Auto-refresh every 5 seconds
+st.set_page_config(page_title="Realtime UG Voting Dashboard", layout="wide")
 if has_autorefresh:
-    st_autorefresh(interval=5000, key="votes_refresh")
-else:
-    st.sidebar.warning("For auto-refresh install `streamlit-autorefresh`: pip install streamlit-autorefresh")
+    st_autorefresh(interval=15000, key="refresh")
 
+# Fetch Votes
 
-# Data fetching helpers
-
-@st.cache_data(ttl=4)
+@st.cache_data(ttl=5)
 def fetch_votes():
-    """
-    Returns dataframe: district, candidate_name, total_votes
-    """
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT district, candidate_name, COUNT(*) as total_votes
-            FROM votes_stream
-            GROUP BY district, candidate_name
-            ORDER BY district, candidate_name;
-        """)
-        data = cur.fetchall()
-        cur.close()
+        conn = psycopg2.connect(host="localhost", port=5433,
+                                dbname="votes_db", user="admin", password="admin")
+        df = pd.read_sql("SELECT district, candidate_name, timestamp FROM votes_stream;", conn)
         conn.close()
-        df = pd.DataFrame(data, columns=['district', 'candidate_name', 'total_votes'])
         return df
     except Exception as e:
         st.sidebar.error(f"Unable to fetch votes: {e}")
-        return pd.DataFrame(columns=['district', 'candidate_name', 'total_votes'])
-
-@st.cache_data(ttl=30)
-def fetch_candidates():
-    try:
-        conn = psycopg2.connect(**DB_CONFIG)
-        df = pd.read_sql("SELECT * FROM candidates ORDER BY candidate_id;", conn)
-        conn.close()
-        return df
-    except Exception as e:
-        st.sidebar.warning(f"Candidates table not available: {e}")
-        # Fallback to minimal candidate info if DB not available
-        fallback = pd.DataFrame([
-            {"candidate_id":"c1","candidate_name":"Yoweri Museveni","party_affiliation":"National Resistance Movement","slogan":"Settle for the Best, Museveni is the Best","photo_url":CANDIDATE_IMAGES.get("Yoweri Museveni","")},
-            {"candidate_id":"c2","candidate_name":"Robert Kyagulanyi Ssentamu","party_affiliation":"National Unity Platform","slogan":"A New Uganda Now","photo_url":CANDIDATE_IMAGES.get("Robert Kyagulanyi Ssentamu","")},
-            {"candidate_id":"c3","candidate_name":"Mugisha Muntu","party_affiliation":"Alliance for National Transformation","slogan":"Change you can trust","photo_url":CANDIDATE_IMAGES.get("Mugisha Muntu","")}
-        ])
-        return fallback
-
-@st.cache_data(ttl=10)
-def fetch_voters_sample(limit=20):
-    try:
-        conn = psycopg2.connect(**DB_CONFIG)
-        df = pd.read_sql(f"SELECT * FROM voters LIMIT {limit};", conn)
-        conn.close()
-        return df
-    except Exception as e:
-        st.sidebar.info("Voters table not found or inaccessible.")
         return pd.DataFrame()
 
-
-# UI Layout / Header
-
-st.title("Realtime UG-Election Voting Dashboard 🇺🇬")
-st.caption(f"Last refresh: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}")
-
-cols = st.columns([1, 2])
-with cols[0]:
-    st.metric("🎯 Target Votes", TARGET_VOTES)
-with cols[1]:
-    # show top-level totals once below
-    pass
-
-
-# Fetch data
-
 votes_df = fetch_votes()
-candidates_df = fetch_candidates()
-voters_df = fetch_voters_sample(20)
 
-# Ensure all districts appear even if no votes yet
-all_districts_df = pd.DataFrame({'district': DISTRICTS})
-# pivot votes to have candidate columns per district
+# Pivot vote counts
 if not votes_df.empty:
-    pivot = votes_df.pivot_table(index='district', columns='candidate_name', values='total_votes', aggfunc='sum').fillna(0)
+    pivot = votes_df.groupby(["district", "candidate_name"]).size().unstack(fill_value=0)
 else:
-    pivot = pd.DataFrame(index=DISTRICTS, columns=list(CANDIDATE_IMAGES.keys())).fillna(0)
+    pivot = pd.DataFrame(0, index=DISTRICTS, columns=list(CANDIDATE_COLORS.keys()))
 
-# Make sure pivot contains all candidates
-for c in CANDIDATE_IMAGES.keys():
-    if c not in pivot.columns:
-        pivot[c] = 0
-pivot = pivot.reindex(index=DISTRICTS).fillna(0)
+pivot = pivot.reindex(DISTRICTS).fillna(0)
 
-# Flatten for charting / metrics
-vote_sum_per_candidate = pivot.sum(axis=0).reset_index()
-vote_sum_per_candidate.columns = ['candidate_name', 'total_votes']
-total_votes = int(vote_sum_per_candidate['total_votes'].sum())
+#  Totals & Metrics
 
+totals = pivot.sum(axis=0).reset_index()
+totals.columns = ["candidate_name", "total_votes"]
+total_votes = int(totals["total_votes"].sum())
 
-# Top metrics / progress
+st.title("🇺🇬 Realtime UG 2026 Voting Dashboard")
+c1, c2, c3, c4 = st.columns(4)
+c1.metric("🎯 Target Votes", TARGET_VOTES)
+c2.metric("📊 Total Votes (so far)", f"{total_votes:,}")
+c3.metric("📍 Reporting Districts", int((pivot.sum(axis=1) > 0).sum()))
+leader = totals.sort_values("total_votes", ascending=False).iloc[0]
+c4.metric("🏆 Current Leader", leader["candidate_name"])
+st.progress(min(total_votes / TARGET_VOTES, 1.0))
 
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Total Votes (so far)", total_votes)
-col2.metric("Distinct Districts Reporting", int((pivot.sum(axis=1) > 0).sum()))
-# Leading candidate
-if total_votes > 0:
-    leader = vote_sum_per_candidate.sort_values('total_votes', ascending=False).iloc[0]
-    col3.metric("Leading Candidate", f"{leader['candidate_name']}", f"{int(leader['total_votes'])} votes")
+# Choropleth Map (Colored by Winning Candidate)
+
+GEOJSON_PATH = "/Users/smartlyfe/Desktop/RealtimeVotingEngineering/data/ug_districts.geo.json"
+ug_geo = None
+try:
+    with open(GEOJSON_PATH) as f:
+        ug_geo = json.load(f)
+except Exception as e:
+    st.warning(f"Could not load GeoJSON: {e}")
+
+if ug_geo:
+    # Find the winning candidate for each district
+    winning_candidate = pivot.idxmax(axis=1).reset_index()
+    winning_candidate.columns = ["district", "winning_candidate"]
+
+    # Get the vote count for the winning candidate
+    winning_votes = pivot.max(axis=1).reset_index()
+    winning_votes.columns = ["district", "votes"]
+
+    # Merge the data
+    map_data = winning_candidate.merge(winning_votes, on="district")
+
+    # Map the winning candidate to their color
+    map_data["color"] = map_data["winning_candidate"].map(CANDIDATE_COLORS)
+
+    # Create the choropleth map using plotly graph objects for custom colors
+    fig_map = go.Figure()
+
+    for candidate in CANDIDATE_COLORS.keys():
+        candidate_districts = map_data[map_data["winning_candidate"] == candidate]
+
+        if len(candidate_districts) > 0:
+            fig_map.add_trace(go.Choropleth(
+                geojson=ug_geo,
+                locations=candidate_districts["district"],
+                z=[1] * len(candidate_districts),
+                featureidkey="properties.name",
+                colorscale=[[0, CANDIDATE_COLORS[candidate]], [1, CANDIDATE_COLORS[candidate]]],
+                showscale=False,
+                marker_line_color='white',
+                marker_line_width=0.5,
+                name=candidate,
+                hovertemplate='<b>%{location}</b><br>Winner: ' + candidate + '<br>Votes: %{customdata}<extra></extra>',
+                customdata=candidate_districts["votes"]
+            ))
+
+    fig_map.update_geos(fitbounds="locations", visible=False)
+    fig_map.update_layout(
+        title="📍 Districts Colored by Winning Candidate",
+        height=600,
+        showlegend=True,
+        legend=dict(
+            title="Winning Candidate",
+            orientation="v",
+            yanchor="middle",
+            y=0.5,
+            xanchor="left",
+            x=1.02
+        )
+    )
+
+    st.plotly_chart(fig_map, use_container_width=True)
 else:
-    col3.metric("Leading Candidate", "—", "0 votes")
-col4.metric("Refresh interval (sec)", 5 if has_autorefresh else "manual")
+    st.warning("Map not loaded (geojson issue).")
 
-st.progress(min(1.0, total_votes / TARGET_VOTES))
-
-
-# Charts
-
-# Pie chart - overall distribution
-if total_votes > 0:
-    vote_sum_for_plot = vote_sum_per_candidate.copy()
-    vote_sum_for_plot['pct'] = vote_sum_for_plot['total_votes'] / total_votes * 100
-else:
-    vote_sum_for_plot = vote_sum_per_candidate.copy()
-    vote_sum_for_plot['pct'] = 0
+#  Pie Chart
 
 fig_pie = px.pie(
-    vote_sum_for_plot,
-    names='candidate_name',
-    values='total_votes',
-    color='candidate_name',
-    color_discrete_map=CANDIDATE_COLORS,
-    title="Total Vote Distribution"
+    totals, names="candidate_name", values="total_votes",
+    color="candidate_name", color_discrete_map=CANDIDATE_COLORS,
+    title="📊 Overall Vote Distribution"
 )
 st.plotly_chart(fig_pie, use_container_width=True)
 
-# Bar chart per district (stacked)
+#  District Stacked Bar
+
+pivot_for_bar = pivot.reset_index()
+pivot_for_bar = pivot_for_bar.rename(columns={'index': 'district'}) if 'index' in pivot_for_bar.columns else pivot_for_bar
+
 fig_bar = px.bar(
-    pivot.reset_index(),
-    x='district',
-    y=list(CANDIDATE_IMAGES.keys()),
-    title="Votes per District (stacked)"
+    pivot_for_bar, x="district", y=list(CANDIDATE_COLORS.keys()),
+    title="📈 Votes per District (Stacked)",
+    barmode="stack", color_discrete_map=CANDIDATE_COLORS
 )
-fig_bar.update_layout(xaxis={'categoryorder':'array', 'categoryarray':DISTRICTS})
 st.plotly_chart(fig_bar, use_container_width=True)
 
+#  Region Stacked Bar
 
-# Candidate Cards (images + small stats)
+# Create a copy to avoid modifying the original pivot
+pivot_with_region = pivot.copy()
+pivot_with_region["region"] = pivot_with_region.index.map(lambda d: district_to_region.get(d, "Unknown"))
+region_sum = pivot_with_region.groupby("region").sum().reset_index()
+region_cols = [c for c in region_sum.columns if c not in ["region"]]
 
-st.subheader("🧑‍💼 Candidates")
+fig_region = px.bar(
+    region_sum, x="region", y=region_cols,
+    title="📊 Votes by Region (Stacked)",
+    barmode="stack", color_discrete_map=CANDIDATE_COLORS
+)
+st.plotly_chart(fig_region, use_container_width=True)
+
+#  Time Trend
+
+if not votes_df.empty:
+    votes_df["timestamp"] = pd.to_datetime(votes_df["timestamp"])
+    tt = votes_df.groupby([pd.Grouper(key="timestamp", freq="1Min"), "candidate_name"]).size().reset_index(name="votes")
+
+    fig_trend = px.line(
+        tt, x="timestamp", y="votes", color="candidate_name",
+        title="📈 Vote Trend Over Time",
+        color_discrete_map=CANDIDATE_COLORS
+    )
+    st.plotly_chart(fig_trend, use_container_width=True)
+
+# Candidate Cards
+
+st.subheader("🧑‍💼 Candidates Overview")
 cards = st.columns(len(CANDIDATE_IMAGES))
-for i, (name, img_url) in enumerate(CANDIDATE_IMAGES.items()):
-    votes_for = int(vote_sum_per_candidate.set_index('candidate_name').reindex([name]).fillna(0)['total_votes'].iloc[0])
-    pct = (votes_for / total_votes * 100) if total_votes > 0 else 0
+for i, (nm, img) in enumerate(CANDIDATE_IMAGES.items()):
+    v = int(totals.set_index("candidate_name").reindex([nm]).fillna(0)["total_votes"].iloc[0])
+    pct = (v / total_votes * 100) if total_votes > 0 else 0
     with cards[i]:
-        st.image(img_url, caption=f"{name}", width=180)
-        st.markdown(f"**{name}**")
-        st.markdown(f"Votes: **{votes_for:,}**")
+        st.image(img, width=180)
+        st.markdown(f"**{nm}**")
+        st.markdown(f"Votes: **{v:,}**")
         st.markdown(f"Percent: **{pct:.2f}%**")
 
+# Detailed Table
 
-# Detailed Tables
+st.subheader("📋 Detailed Results by District")
+detail = pivot.reset_index().melt(id_vars="district", var_name="candidate_name", value_name="votes")
+st.dataframe(detail, use_container_width=True)
 
-st.subheader("📋 Detailed Vote Results (by district & candidate)")
-# Merge to ensure all districts displayed
-votes_flat = votes_df.copy()
-if votes_flat.empty:
-    votes_flat = pd.DataFrame(columns=['district', 'candidate_name', 'total_votes'])
-all_districts_df = pd.DataFrame({'district': DISTRICTS})
-# Make sure each district + candidate appears - we'll show pivot flattened
-detailed = pivot.reset_index().melt(id_vars='district', var_name='candidate_name', value_name='total_votes')
-detailed = detailed.sort_values(['district', 'candidate_name']).reset_index(drop=True)
-st.dataframe(detailed, use_container_width=True)
-
-# Candidates table
-st.subheader("🗳️ Candidates Table (from DB)")
-st.dataframe(candidates_df)
-
-# Voters sample
-st.subheader("🧾 Sample Registered Voters (first 20 rows)")
-if not voters_df.empty:
-    st.dataframe(voters_df)
-else:
-    st.info("No voters sample available (voters table missing or empty).")
-
-
-# Footer / Notes
-
-st.markdown("---")
-st.caption("This dashboard reads from `votes_stream` Postgres table (aggregated via consumer or Spark). If numbers seem low: check your producer speed or how many messages are in the Kafka topic. To reach the target of 50,000 votes, increase producer throughput or run the producer longer.")
+st.caption("Results from the `votes_stream` Postgres table. Refresh to see updates.")
