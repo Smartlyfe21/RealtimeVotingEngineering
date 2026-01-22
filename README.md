@@ -79,7 +79,41 @@ spark-submit spark-streaming/spark-streaming.py
 📊 Dashboard Visuals
 Candidates 🏛️
 Voting included **all 136 districts across all regions**.
-<div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg" width="100"/> </div>
+<div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+  <div style="text-align: center;">
+    <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg" width="100"/>
+    <br>44.93%
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg" width="100"/>
+    <br>47.77%
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg" width="100"/>
+    <br>0.70%
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg" width="100"/>
+    <br>0.94%
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg" width="100"/>
+    <br>1.30%
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg" width="100"/>
+    <br>1.29%
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg" width="100"/>
+    <br>1.62%
+  </div>
+  <div style="text-align: center;">
+    <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg" width="100"/>
+    <br>1.45%
+  </div>
+</div>
+
 Charts & Maps 📈
 <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;"> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/piechart.png" width="400"/><br> <strong>Vote Share Pie Chart</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/region-barplot-3.png" width="400"/><br> <strong>Regional Bar Plot</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/ugmap.png" width="400"/><br> <strong>District Votes Map</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/Vote-trendplot-2.png" width="400"/><br> <strong>Vote Trends</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/districtvote-4.png" width="400"/><br> <strong>District Vote Chart</strong> </div> </div>
 
