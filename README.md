@@ -82,36 +82,36 @@ Voting included **all 136 districts across all regions**.
 <table align="center">
   <tr>
     <td align="center">
-      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg" width="80"/><br>
-      <strong>Museveni</strong><br>44.93%
+      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg" width="90"/><br>
+      <strong>Yoweri Museveni</strong>
     </td>
     <td align="center">
-      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg" width="80"/><br>
-      <strong>Kyagulanyi</strong><br>47.77%
+      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg" width="90"/><br>
+      <strong>Robert Kyagulanyi</strong>
     </td>
     <td align="center">
-      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg" width="80"/><br>
-      <strong>Muntu</strong><br>0.70%
+      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg" width="90"/><br>
+      <strong>Mugisha Muntu</strong>
     </td>
     <td align="center">
-      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg" width="80"/><br>
-      <strong>Mafabi</strong><br>0.94%
+      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg" width="90"/><br>
+      <strong>Nandala Mafabi</strong>
     </td>
     <td align="center">
-      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg" width="80"/><br>
-      <strong>Sserunga</strong><br>1.30%
+      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg" width="90"/><br>
+      <strong>Mubarak Sserunga</strong>
     </td>
     <td align="center">
-      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg" width="80"/><br>
-      <strong>Mabirizi</strong><br>1.29%
+      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg" width="90"/><br>
+      <strong>Elton Mabirizi</strong>
     </td>
     <td align="center">
-      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg" width="80"/><br>
-      <strong>Kabinga</strong><br>1.62%
+      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg" width="90"/><br>
+      <strong>Bulira Kabinga</strong>
     </td>
     <td align="center">
-      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg" width="80"/><br>
-      <strong>Kasibante</strong><br>1.45%
+      <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg" width="90"/><br>
+      <strong>Robert Kasibante</strong>
     </td>
   </tr>
 </table>
