@@ -73,13 +73,12 @@ Candidates 🏛️
 Voting included **all 136 districts across all regions**.
 
 | ![Yoweri Museveni](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg) | ![Robert Kyagulanyi Ssentamu](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg) | ![Mugisha Muntu](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg) | ![James Nathan Nandala Mafabi](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg) |
-| --- | --- | --- | --- |
-| **Yoweri Museveni**<br>Votes: 222,987<br>44.93% | **Robert Kyagulanyi Ssentamu**<br>Votes: 237,081<br>47.77% | **Mugisha Muntu**<br>Votes: 3,464<br>0.70% | **James Nathan Nandala Mafabi**<br>Votes: 4,656<br>0.94% |
+| :---: | :---: | :---: | :---: |
+| **Yoweri Museveni**<br>222,987 Votes<br>44.93% | **Robert Kyagulanyi Ssentamu**<br>237,081 Votes<br>47.77% | **Mugisha Muntu**<br>3,464 Votes<br>0.70% | **James Nathan Nandala Mafabi**<br>4,656 Votes<br>0.94% |
 
 | ![Mubarak Munyagwa Sserunga](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg) | ![Elton Joseph Mabirizi](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg) | ![Bulira Frank Kabinga](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg) | ![Robert Kasibante](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg) |
-| --- | --- | --- | --- |
-| **Mubarak Munyagwa Sserunga**<br>Votes: 6,452<br>1.30% | **Elton Joseph Mabirizi**<br>Votes: 6,406<br>1.29% | **Bulira Frank Kabinga**<br>Votes: 8,041<br>1.62% | **Robert Kasibante**<br>Votes: 7,221<br>1.45% |
-
+| :---: | :---: | :---: | :---: |
+| **Mubarak Munyagwa Sserunga**<br>6,452 Votes<br>1.30% | **Elton Joseph Mabirizi**<br>6,406 Votes<br>1.29% | **Bulira Frank Kabinga**<br>8,041 Votes<br>1.62% | **Robert Kasibante**<br>7,221 Votes<br>1.45% |
 
 Charts & Maps 📈
 <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;"> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/piechart.png" width="400"/><br> <strong>Vote Share Pie Chart</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/region-barplot-3.png" width="400"/><br> <strong>Regional Bar Plot</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/ugmap.png" width="400"/><br> <strong>District Votes Map</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/Vote-trendplot-2.png" width="400"/><br> <strong>Vote Trends</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/districtvote-4.png" width="400"/><br> <strong>District Vote Chart</strong> </div> </div>
