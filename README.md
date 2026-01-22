@@ -1,26 +1,11 @@
-# 🇺🇬 Realtime UG 2026 Voting Dashboard
+🇺🇬 Realtime UG 2026 Voting Dashboard 🗳️
 
-🗳️ **Realtime Voting Data Engineering**
-
-This repository contains a **personal, educational, and technical demonstration** of a realtime election voting system built using **Python, Apache Kafka, Spark Structured Streaming, PostgreSQL, and Streamlit**.  
+This repository is a personal, educational, and technical demonstration of a realtime election voting system built using Python, Apache Kafka, Spark Structured Streaming, PostgreSQL, and Streamlit.
 It simulates votes, processes them in realtime, persists aggregated results, and visualizes them in an interactive dashboard.
-
-> ⚠️ **Disclaimer**
->  
-> This project is a **personal, educational, and technical demonstration** of real-time data engineering concepts.  
->  
-> It was **inspired by the upcoming Uganda general elections (January 15th, 2026)** as a real-world scenario for building and testing streaming data systems.  
->  
-> **All data used in this project is fully synthetic and simulated.**  
-> This project is **NOT affiliated with any government, electoral commission, political party, or political process** in Uganda or elsewhere, and it does **NOT represent real election results, predictions, or outcomes**.
-
----
-
-## 🧠 Architecture Overview
-
-The system follows a **real-time streaming pipeline**:
-
-```text
+⚠️ Disclaimer
+All data is fully synthetic and simulated. This project is NOT affiliated with any government, electoral commission, political party, or political process in Uganda or elsewhere, and it does NOT represent real election results.
+🧠 Architecture Overview
+Realtime streaming pipeline:
 python main.py --> creates tables & sets up database
 ↓
 voting.py --> simulates vote generation into Kafka
@@ -37,14 +22,13 @@ Streamlit Dashboard (realtime visualization)
 ✔ Initializes database tables automatically via main.py
 ✔ Simulates voting data in realtime (voting.py)
 ✔ Streams data into Kafka
-✔ Processes and aggregates votes with Spark
+✔ Processes and aggregates votes with Spark Structured Streaming
 ✔ Stores results in PostgreSQL
 ✔ Displays realtime visualizations with Streamlit
 ✔ Shows per-candidate, per-district, and regional breakdowns
 ✔ Choropleth map of votes by district
 ✔ Time series and stacked charts for trends
 ✔ Candidate cards with photos, votes & percentages
-
 
 📁 Project Structure
 RealtimeVotingEngineering/
@@ -63,8 +47,6 @@ RealtimeVotingEngineering/
 ├── voting.py               # Generates vote simulation
 └── README.md               # Project documentation
 
-
-Getting Started
 1️⃣ Clone the Repository
 git clone https://github.com/Smartlyfe21/RealtimeVotingEngineering.git
 cd RealtimeVotingEngineering
@@ -75,14 +57,10 @@ pip install -r requirements.txt
 3️⃣ Start Services
 Start Kafka, Zookeeper, and PostgreSQL with Docker Compose:
 docker compose up -d
-This will start:
-Apache Kafka + ZooKeeper
-PostgreSQL with a voting database
-Optional Kafka UI / Postgres UI
-Make sure PostgreSQL credentials match those in your code configuration.
 
 4️⃣ Initialize Database Tables
 python main.py
+
 5️⃣ Start the Vote Simulation
 python voting.py
 
@@ -90,20 +68,13 @@ python voting.py
 spark-submit spark-streaming/spark-streaming.py
 
 📊 Dashboard Visuals
-Candidate Photos
-<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;"> <div style="text-align: center; width: 140px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg" width="120"/><br> <strong>Yoweri Museveni</strong><br> Votes: 222,987<br> 44.93% </div> <div style="text-align: center; width: 140px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg" width="120"/><br> <strong>Robert Kyagulanyi Ssentamu</strong><br> Votes: 237,081<br> 47.77% </div> <div style="text-align: center; width: 140px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg" width="120"/><br> <strong>Mugisha Muntu</strong><br> Votes: 3,464<br> 0.70% </div> <div style="text-align: center; width: 140px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg" width="120"/><br> <strong>James Nathan Nandala Mafabi</strong><br> Votes: 4,656<br> 0.94% </div> <div style="text-align: center; width: 140px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg" width="120"/><br> <strong>Mubarak Munyagwa Sserunga</strong><br> Votes: 6,452<br> 1.30% </div> <div style="text-align: center; width: 140px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg" width="120"/><br> <strong>Elton Joseph Mabirizi</strong><br> Votes: 6,406<br> 1.29% </div> <div style="text-align: center; width: 140px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg" width="120"/><br> <strong>Bulira Frank Kabinga</strong><br> Votes: 8,041<br> 1.62% </div> <div style="text-align: center; width: 140px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg" width="120"/><br> <strong>Robert Kasibante</strong><br> Votes: 7,221<br> 1.45% </div> </div>
+Candidates 🏛️
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;"> <div style="text-align:center; width: 150px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg" width="120"/><br> <strong>Yoweri Museveni</strong><br> Votes: 222,987<br> 44.93% </div> <div style="text-align:center; width: 150px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg" width="120"/><br> <strong>Robert Kyagulanyi Ssentamu</strong><br> Votes: 237,081<br> 47.77% </div> <div style="text-align:center; width: 150px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg" width="120"/><br> <strong>Mugisha Muntu</strong><br> Votes: 3,464<br> 0.70% </div> <div style="text-align:center; width: 150px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg" width="120"/><br> <strong>James Nathan Nandala Mafabi</strong><br> Votes: 4,656<br> 0.94% </div> <div style="text-align:center; width: 150px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg" width="120"/><br> <strong>Mubarak Munyagwa Sserunga</strong><br> Votes: 6,452<br> 1.30% </div> <div style="text-align:center; width: 150px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg" width="120"/><br> <strong>Elton Joseph Mabirizi</strong><br> Votes: 6,406<br> 1.29% </div> <div style="text-align:center; width: 150px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg" width="120"/><br> <strong>Bulira Frank Kabinga</strong><br> Votes: 8,041<br> 1.62% </div> <div style="text-align:center; width: 150px;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg" width="120"/><br> <strong>Robert Kasibante</strong><br> Votes: 7,221<br> 1.45% </div> </div>
 
-
-Charts & Maps
+Charts & Maps 📈
 <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;"> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/piechart.png" width="300"/><br> <strong>Vote Share Pie Chart</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/region-barplot-3.png" width="300"/><br> <strong>Regional Bar Plot</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/ugmap.png" width="300"/><br> <strong>District Votes Map</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/Vote-trendplot-2.png" width="300"/><br> <strong>Vote Trends</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/districtvote-4.png" width="300"/><br> <strong>District Vote Chart</strong> </div> </div>
-Variable	Description
-TARGET_VOTES	Target vote count for progress bar
-Set it before running Streamlit to your choice according to how strong your machine is:
-export TARGET_VOTES=500000
-
 
 📊 Results Preview
-This section shows synthetic voting results generated by the project:
 | Candidate                   | Votes   | Percent |
 | --------------------------- | ------- | ------- |
 | Yoweri Museveni             | 222,987 | 44.93%  |
@@ -115,12 +86,13 @@ This section shows synthetic voting results generated by the project:
 | Bulira Frank Kabinga        | 8,041   | 1.62%   |
 | Robert Kasibante            | 7,221   | 1.45%   |
 
-
-
 ⚠️ Reminder: These results are fully synthetic and for demonstration only.
+
 🧠 Notes & Tips
-✔ st.set_page_config() must appear as the first Streamlit call
-✔ District names/codes in the app must match GeoJSON
-✔ Adjust dashboard refresh settings for latency vs CPU usage
+st.set_page_config() must appear as the first Streamlit call
+District names/codes in the app must match GeoJSON
+Adjust dashboard refresh settings for latency vs CPU usage
+
+
 📄 License
-This project is released under the MIT License — free to use and adapt.
+This project is released under the MIT License
