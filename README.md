@@ -1,11 +1,19 @@
-🇺🇬 Realtime UG 2026 Voting Dashboard 🗳️
+# 🇺🇬 Realtime UG 2026 Voting Dashboard 🗳️
 
-This repository is a personal, educational, and technical demonstration of a realtime election voting system built using Python, Apache Kafka, Spark Structured Streaming, PostgreSQL, and Streamlit.
-It simulates votes, processes them in realtime, persists aggregated results, and visualizes them in an interactive dashboard.
-⚠️ Disclaimer
-All data is fully synthetic and simulated. This project is NOT affiliated with any government, electoral commission, political party, or political process in Uganda or elsewhere, and it does NOT represent real election results.
-🧠 Architecture Overview
-Realtime streaming pipeline:
+This project was inspired by the **upcoming 15th January 2026 Uganda general election**.  
+It is a personal, educational, and technical demonstration of a realtime election voting system built using **Python, Apache Kafka, Spark Structured Streaming, PostgreSQL, and Streamlit**.  
+
+It simulates votes, processes them in realtime, persists aggregated results, and visualizes them in an interactive dashboard.  
+
+⚠️ **Disclaimer:** All data is fully synthetic and simulated. This project is NOT affiliated with any government, electoral commission, political party, or political process in Uganda or elsewhere, and it does NOT represent real election results, predictions, or outcomes.
+
+---
+
+## 🧠 Architecture Overview
+
+The system follows a real-time streaming pipeline:
+
+
 
 python main.py --> creates tables & sets up database
 ↓
@@ -71,15 +79,7 @@ spark-submit spark-streaming/spark-streaming.py
 📊 Dashboard Visuals
 Candidates 🏛️
 Voting included **all 136 districts across all regions**.
-
-| ![Yoweri Museveni](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg) | ![Robert Kyagulanyi Ssentamu](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg) | ![Mugisha Muntu](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg) | ![James Nathan Nandala Mafabi](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg) |
-| :---: | :---: | :---: | :---: |
-| **Yoweri Museveni**<br>222,987 Votes<br>44.93% | **Robert Kyagulanyi Ssentamu**<br>237,081 Votes<br>47.77% | **Mugisha Muntu**<br>3,464 Votes<br>0.70% | **James Nathan Nandala Mafabi**<br>4,656 Votes<br>0.94% |
-
-| ![Mubarak Munyagwa Sserunga](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg) | ![Elton Joseph Mabirizi](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg) | ![Bulira Frank Kabinga](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg) | ![Robert Kasibante](https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg) |
-| :---: | :---: | :---: | :---: |
-| **Mubarak Munyagwa Sserunga**<br>6,452 Votes<br>1.30% | **Elton Joseph Mabirizi**<br>6,406 Votes<br>1.29% | **Bulira Frank Kabinga**<br>8,041 Votes<br>1.62% | **Robert Kasibante**<br>7,221 Votes<br>1.45% |
-
+<div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_ANT_4179.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CMP4809%202.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_CP_4808%202.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_FDC_4804%202.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NPP_4806%202.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NRM_4183.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_NUP_4181.jpg" width="100"/> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/IMG_RPP_4811.jpg" width="100"/> </div>
 Charts & Maps 📈
 <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;"> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/piechart.png" width="400"/><br> <strong>Vote Share Pie Chart</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/region-barplot-3.png" width="400"/><br> <strong>Regional Bar Plot</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/ugmap.png" width="400"/><br> <strong>District Votes Map</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/Vote-trendplot-2.png" width="400"/><br> <strong>Vote Trends</strong> </div> <div style="text-align:center;"> <img src="https://github.com/Smartlyfe21/RealtimeVotingEngineering/raw/main/images/districtvote-4.png" width="400"/><br> <strong>District Vote Chart</strong> </div> </div>
 
